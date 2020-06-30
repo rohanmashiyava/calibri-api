@@ -38,7 +38,6 @@ class SubscriptionInfo extends \yii\db\ActiveRecord
         return [
             [['user_device_id', 'expiry_time', 'last_update_time', 'order_id', 'product_id', 'purchase_state', 'purchase_time'], 'required'],
             [['user_device_id', 'expiry_time', 'last_update_time', 'purchase_time'], 'integer'],
-            [['order_id', 'product_id', 'purchase_state'], 'string', 'max' => 255],
             [['user_device_id'], 'exist', 'skipOnError' => true, 'targetClass' => UserDevicesInfo::className(), 'targetAttribute' => ['user_device_id' => 'id']],
         ];
     }

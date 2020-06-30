@@ -28,7 +28,13 @@ class DevicesController extends RestController
             $data=[];
             if(Yii::$app->request->isPost){
                 $postdata = Json::decode(file_get_contents("php://input"));
-                $model= new UserDevicesInfo();
+                $user = UserDevicesInfo::findOne(['unique_device_id'=>$postdata['UUID']]);
+                if($user){
+                    $model = $user;
+                }else{
+                    $model= new UserDevicesInfo();
+                }
+
                 $model->attributes = $postdata;
                 $model->unique_device_id =  $postdata['UUID'];
                 $model->paid_app = $postdata['paidApp'];
@@ -41,8 +47,6 @@ class DevicesController extends RestController
                     $data['message']= $this->getStatusCodeMessage($code);
 
                 }else{
-                    print_r($model->getErrors());die;
-
                     $code = $data['error']['code'] = 200;
                     $data['error']['message']= "something went wrong.";
                 }
@@ -73,13 +77,18 @@ class DevicesController extends RestController
             if(Yii::$app->request->isPost){
                 $postdata = Json::decode(file_get_contents("php://input"));
 
-                $user = UserDevicesInfo::findOne(['unique_id'=>$postdata['UUID']]);
+                $user = UserDevicesInfo::findOne(['unique_device_id'=>$postdata['UUID']]);
                 if($user){
-                    print_r($postdata);die();
                     $model = new SubscriptionInfo();
                     $model->user_device_id = $user->id;
                     $model->auto_renewing = $postdata['autoRenewing'];
-                    //$
+                    $model->expiry_time = $postdata['expiryTime'];
+                    $model->is_expired = $postdata['isExpired'];
+                    $model->last_update_time = $postdata['lastUpdateTime'];
+                    $model->order_id = $postdata['orderId'];
+                    $model->product_id = $postdata['productId'];
+                    $model->purchase_state = $postdata['purchaseState'];
+                    $model->purchase_time = $postdata['purchaseTime'];
                     if($model->validate()){
                         $model->save();
                         $code = $data['code'] = 201;
