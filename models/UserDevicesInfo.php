@@ -34,7 +34,7 @@ class UserDevicesInfo extends \yii\db\ActiveRecord
     {
         return [
             [['unique_device_id', 'version_name', 'version_code', 'last_version', 'created_date'], 'required'],
-            [['paid_app', 'created_date'], 'integer'],
+            [['created_date'], 'integer'],
             [['unique_device_id', 'version_name', 'version_code', 'last_version'], 'string', 'max' => 255],
         ];
     }

@@ -41,6 +41,8 @@ class DevicesController extends RestController
                     $data['message']= $this->getStatusCodeMessage($code);
 
                 }else{
+                    print_r($model->getErrors());die;
+
                     $code = $data['error']['code'] = 200;
                     $data['error']['message']= "something went wrong.";
                 }
@@ -77,12 +79,14 @@ class DevicesController extends RestController
                     $model = new SubscriptionInfo();
                     $model->user_device_id = $user->id;
                     $model->auto_renewing = $postdata['autoRenewing'];
+                    //$
                     if($model->validate()){
                         $model->save();
                         $code = $data['code'] = 201;
                         $data['message']= $this->getStatusCodeMessage($code);
 
                     }else{
+                        print_r($model->getErrors());die;
                         $code = $data['error']['code'] = 200;
                         $data['error']['message']= "something went wrong.";
                     }
