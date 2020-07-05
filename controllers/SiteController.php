@@ -2,8 +2,10 @@
 
 namespace app\controllers;
 
+use app\models\UserDevicesInfo;
 use Yii;
 use yii\filters\AccessControl;
+use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
@@ -52,6 +54,44 @@ class SiteController extends Controller
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
         ];
+    }
+
+    public function actionUploadPrevious(){
+        $json = file_get_contents(Yii::getAlias(Yii::getAlias('@app').DIRECTORY_SEPARATOR.'data-json'.DIRECTORY_SEPARATOR.'firestore-export.json'));
+        $arr = Json::decode($json);
+        $flg= true;
+        $transaction = Yii::$app->db->beginTransaction();
+
+        foreach($arr as $key => $data_arr){
+           foreach($data_arr  as $data){
+               $devices = new UserDevicesInfo();
+               $devices->unique_device_id = $data['UUID'];
+               $devices->version_code =  (string)$data['versionCode'];
+               $devices->last_version = isset($data['lastVersion'])?$data['lastVersion']:null;
+               $devices->version_name = (string)$data['versionName'];
+               $devices->paid_app = isset($data['paidApp'])?$data['paidApp']:0;
+               $devices->created_date = time();
+               if($devices->validate()){
+                   $devices->save();
+                   $flg= true;
+               }else{
+                   foreach($devices->errors as $error){
+                       foreach($error as $e){
+                           echo $e;
+                       }
+                   }
+                   $flg= false;
+
+               }
+           }
+           if($flg == true){
+               echo "badha insert thai gya";
+               $transaction->commit();
+           }else{
+               echo "locho..";
+               $transaction->rollBack();
+           }
+        }
     }
 
     /**

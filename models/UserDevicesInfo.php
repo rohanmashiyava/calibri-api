@@ -9,10 +9,10 @@ use Yii;
  *
  * @property int $id
  * @property string $unique_device_id
- * @property string $version_name
- * @property string $version_code
+ * @property string|null $version_name
+ * @property string|null $version_code
  * @property int $paid_app 0-notpaid 1-paid
- * @property string $last_version
+ * @property string|null $last_version
  * @property int $created_date
  *
  * @property SubscriptionInfo[] $subscriptionInfos
@@ -33,9 +33,8 @@ class UserDevicesInfo extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['unique_device_id', 'version_name', 'version_code', 'last_version', 'created_date'], 'required'],
-            [['created_date'], 'integer'],
-            [['unique_device_id', 'version_name', 'version_code', 'last_version'], 'string', 'max' => 255],
+            [['unique_device_id', 'created_date'], 'required'],
+            [['paid_app', 'created_date'], 'integer'],
         ];
     }
 

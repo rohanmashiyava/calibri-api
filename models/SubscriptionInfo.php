@@ -13,10 +13,11 @@ use Yii;
  * @property int $expiry_time
  * @property int|null $is_expired 0-not expired 1-expired
  * @property int $last_update_time
- * @property string $order_id
- * @property string $product_id
- * @property string $purchase_state
- * @property int $purchase_time
+ * @property int $is_iap
+ * @property string|null $order_id
+ * @property string|null $product_id
+ * @property string|null $purchase_state
+ * @property int|null $purchase_time
  *
  * @property UserDevicesInfo $userDevice
  */
@@ -36,8 +37,9 @@ class SubscriptionInfo extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_device_id', 'expiry_time', 'last_update_time', 'order_id', 'product_id', 'purchase_state', 'purchase_time'], 'required'],
-            [['user_device_id', 'expiry_time', 'last_update_time', 'purchase_time'], 'integer'],
+            [['user_device_id', 'expiry_time', 'last_update_time', 'is_iap'], 'required'],
+            [['user_device_id', 'auto_renewing', 'expiry_time', 'is_expired', 'last_update_time', 'is_iap', 'purchase_time'], 'integer'],
+            [['order_id', 'product_id', 'purchase_state'], 'string', 'max' => 255],
             [['user_device_id'], 'exist', 'skipOnError' => true, 'targetClass' => UserDevicesInfo::className(), 'targetAttribute' => ['user_device_id' => 'id']],
         ];
     }
@@ -54,6 +56,7 @@ class SubscriptionInfo extends \yii\db\ActiveRecord
             'expiry_time' => 'Expiry Time',
             'is_expired' => 'Is Expired',
             'last_update_time' => 'Last Update Time',
+            'is_iap' => 'Is Iap',
             'order_id' => 'Order ID',
             'product_id' => 'Product ID',
             'purchase_state' => 'Purchase State',
